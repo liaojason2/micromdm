@@ -1,0 +1,18 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+jq -n \
+  --arg request_type "RequestMirroring" \
+  --arg udid "$1" \
+  --arg destination_name "$2" \
+  --arg destination_device_id "$3" \
+  --arg scan_time "$4" \
+  --arg password "$5" \
+  '.udid = $udid
+  |.destination_name = $destination_name
+  |.destination_device_id = $destination_device_id
+  |.scan_time = $scan_time
+  |.password = $password
+  |.request_type = $request_type
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-

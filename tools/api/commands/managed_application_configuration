@@ -1,0 +1,12 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+jq -n \
+  --arg request_type "ManagedApplicationConfiguration" \
+  --arg udid "$1" \
+   --arg identifiers "$2" \
+ '.udid = $udid
+  |.request_type = $request_type
+  |.identifiers = ($identifiers | split(","))
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-

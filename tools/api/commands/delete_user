@@ -1,0 +1,14 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+jq -n \
+  --arg request_type "DeleteUser" \
+  --arg udid "$1" \
+  --arg username "$2" \
+  --arg force_deletion $3 \
+  '.udid = $udid
+  |.username = $username
+  |.force_deletion = $force_deletion
+  |.request_type = $request_type
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-

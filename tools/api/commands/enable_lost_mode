@@ -1,0 +1,16 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+jq -n \
+  --arg request_type "EnableLostMode" \
+  --arg udid "$1" \
+  --arg message "$2" \
+  --arg phone_number "$3" \
+  --arg footnote "$4" \
+  '.udid = $udid
+  |.message = $message
+  |.phone_number = $phone_number
+  |.footnote = $footnote
+  |.request_type = $request_type
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-

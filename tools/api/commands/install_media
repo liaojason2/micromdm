@@ -1,0 +1,16 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+jq -n \
+  --arg request_type "InstallMedia" \
+  --arg udid "$1" \
+  --arg itunes_store_id $2 \
+  --arg media_url "$3" \
+  --arg media_type "$4" \
+  '.udid = $udid
+  |.request_type = $request_type
+  |.itunes_store_id = $itunes_store_id
+  |.media_url = $media_url
+  |.media_type = $media_type
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
