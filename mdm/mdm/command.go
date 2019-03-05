@@ -211,7 +211,7 @@ type Setting struct {
 	Enabled                 *bool                  `plist:",omitempty" json:"enabled,omitempty"`
 	DeviceName              *string                `plist:",omitempty" json:"device_name,omitempty"`
 	HostName                *string                `plist:",omitempty" json:"hostname,omitempty"`
-	Identifier              *string                `plist:",omitempty" json:"identifier"`
+	Identifier              *string                `plist:",omitempty" json:"identifier,omitempty"`
 	Attributes              map[string]string      `plist:",omitempty" json:"attributes,omitempty"`
 	Image                   []byte                 `plist:",omitempty" json:"image,omitempty"`
 	Where                   *int                   `plist:",omitempty" json:"where,omitempty"`
@@ -219,7 +219,7 @@ type Setting struct {
 	PasscodeLockGracePeriod *int                   `plist:",omitempty" json:"passcode_lock_grace_period,omitempty"`
 	MaximumResidentUsers    *int                   `plist:",omitempty" json:"maximum_resident_users,omitempty"`
 	Configuration           map[string]interface{} `plist:",omitempty" json:"-"`
-	ConfigurationData       []byte                 `plist:"-" json:"configuration"` // used to build the dictionary
+	ConfigurationData       []byte                 `plist:"-" json:"configuration,omitempty"` // used to build the dictionary
 }
 
 type ManagedApplicationConfiguration struct {
