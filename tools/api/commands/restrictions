@@ -1,18 +1,12 @@
 #!/bin/bash
 source $MICROMDM_ENV_PATH
 endpoint="v1/commands"
-
-profile=$2
-if [ "$profile" == "" ]; then
-  profile="false"
-fi
-
 jq -n \
   --arg request_type "Restrictions" \
   --arg udid "$1" \
-  --argjson profile_restrictions $profile \
+  --argjson profile_restrictions $2 \
   '.udid = $udid
   |.request_type = $request_type
-  |.profile_restrictions = $profile_restrictions
+  |if $profile_restrictions == true then .profile_restrictions = $profile_restrictions end
   '|\
   curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
