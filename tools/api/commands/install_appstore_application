@@ -8,6 +8,7 @@ jq -n \
   '.udid = $udid
   |.request_type = $request_type
   |.itunes_store_id = $itunes_store_id
+  |.options = '{"purchase_method":1}'
   '|\
   curl $CURL_OPTS \
     -H "Content-Type: application/json" \
