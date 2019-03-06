@@ -4,7 +4,7 @@ endpoint="v1/commands"
 jq -n \
   --arg request_type "InstallApplication" \
   --arg udid "$1" \
-  --arg itunes_store_id "$2" \
+  --argjson itunes_store_id "$2" \
   '.udid = $udid
   |.request_type = $request_type
   |.itunes_store_id = $itunes_store_id
