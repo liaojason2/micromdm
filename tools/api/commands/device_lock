@@ -5,8 +5,12 @@ jq -n \
   --arg request_type "DeviceLock" \
   --arg udid "$1" \
   --arg pin $2 \
-  '.udid = $udid 
-  |.pin = $pin 
+  --arg message "$3" \
+  --arg phone_number "$4" \
+  '.udid = $udid
   |.request_type = $request_type
+  |.pin = $pin
+  |.message = $message
+  |.phone_number = $phone_number 
   '|\
   curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
