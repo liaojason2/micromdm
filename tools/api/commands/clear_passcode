@@ -1,10 +1,14 @@
 #!/bin/bash
 source $MICROMDM_ENV_PATH
+
+# Remove any spaces from token
+token=$(echo $2 | sed 's/ //g')
+
 endpoint="v1/commands"
 jq -n \
   --arg request_type "ClearPasscode" \
   --arg udid "$1" \
-  --arg unlock_token $2 \
+  --arg unlock_token "$token" \
   '.udid = $udid
   |.unlock_token = $unlock_token
   |.request_type = $request_type
