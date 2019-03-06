@@ -4,7 +4,7 @@ endpoint="v1/commands"
 jq -n \
   --arg request_type "EraseDevice" \
   --arg udid "$1" \
-  --arg pin $2 \
+  --arg pin "$2" \
   --arg preserve_data_plan $3 \
   --arg disallow_proximity_setup $4 \
   '.udid = $udid
