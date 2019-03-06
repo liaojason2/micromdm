@@ -23,6 +23,7 @@ type DeviceDTO struct {
 	UDID             string    `json:"udid"`
 	EnrollmentStatus bool      `json:"enrollment_status"`
 	LastSeen         time.Time `json:"last_seen"`
+	UnlockToken      string    `json:"unlock_token"`
 }
 
 func (svc *DeviceService) ListDevices(ctx context.Context, opt ListDevicesOption) ([]DeviceDTO, error) {
@@ -34,6 +35,7 @@ func (svc *DeviceService) ListDevices(ctx context.Context, opt ListDevicesOption
 			UDID:             d.UDID,
 			EnrollmentStatus: d.Enrolled,
 			LastSeen:         d.LastSeen,
+			UnlockToken:      d.UnlockToken,
 		})
 	}
 	return dto, err
