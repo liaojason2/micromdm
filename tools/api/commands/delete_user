@@ -1,11 +1,17 @@
 #!/bin/bash
 source $MICROMDM_ENV_PATH
 endpoint="v1/commands"
+
+force=$3
+if [ "$force" == "" ];
+  force="false"
+fi
+
 jq -n \
   --arg request_type "DeleteUser" \
   --arg udid "$1" \
   --arg username "$2" \
-  --arg force_deletion $3 \
+  --argjson force_deletion $3 \
   '.udid = $udid
   |.username = $username
   |.force_deletion = $force_deletion
