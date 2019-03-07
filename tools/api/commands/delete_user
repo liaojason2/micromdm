@@ -3,7 +3,7 @@ source $MICROMDM_ENV_PATH
 endpoint="v1/commands"
 
 force=$3
-if [ "$force" == "" ];
+if [ "$force" == "" ]; then
   force="false"
 fi
 
