@@ -1,0 +1,28 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+
+# Create AutoSetupAdminAccounts Dictionary
+accounts=$(./tools/api/get_users | jq \
+  --arg uuids $4 \
+  'select(.users[] as $users | ($uuids | split(",")) | map([$users[] == .] | any) | all)
+   | .users
+   | [.[]
+   | .["short_name"] = .user_shortname
+   | .["full_name"] = .user_longname]
+   | map(del(.uuid, .udid, .user_id, .auth_token, .user_shortname, .user_longname))')
+
+# Make the AccountConfiguration Request
+jq -n \
+  --arg request_type "AccountConfiguration" \
+  --arg udid "$1" \
+  --argjson skip_primary_setup_account_creation $2 \
+  --argjson set_primary_setup_account_as_regular_user $3 \
+  --argjson auto_setup_admin_accounts "$accounts" \
+ '.udid = $udid
+  |.request_type = $request_type
+  |.skip_primary_setup_account_creation = $skip_primary_setup_account_creation
+  |.set_primary_setup_account_as_regular_user = $set_primary_setup_account_as_regular_user
+  |.auto_setup_admin_accounts = $auto_setup_admin_accounts
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
