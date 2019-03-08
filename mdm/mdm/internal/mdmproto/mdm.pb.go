@@ -2662,7 +2662,7 @@ func (m *ManagedApplicationFeedback) GetDeleteFeedback() bool {
 
 type SetFirmwarePassword struct {
 	CurrentPassword string `protobuf:"bytes,1,opt,name=current_password,json=currentPassword,proto3" json:"current_password,omitempty"`
-	NewPassword     string `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	NewPassword     string `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password"`
 	AllowOroms      bool   `protobuf:"varint,3,opt,name=allow_oroms,json=allowOroms,proto3" json:"allow_oroms,omitempty"`
 }
 
