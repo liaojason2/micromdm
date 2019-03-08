@@ -237,7 +237,7 @@ type ManagedApplicationFeedback struct {
 
 type SetFirmwarePassword struct {
 	CurrentPassword string `plist:",omitempty" json:"current_password,omitempty"`
-	NewPassword     string `plist:",omitempty" json:"new_password,omitempty"`
+	NewPassword     string `plist:",omitempty" json:"new_password"`
 	AllowOroms      bool   `plist:",omitempty" json:"allow_oroms,omitempty"`
 }
 
