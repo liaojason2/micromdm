@@ -2,15 +2,18 @@
 source $MICROMDM_ENV_PATH
 endpoint="v1/commands"
 
+# Usage:
+# uuids - comma separated list of user uuids
+
 # Create AutoSetupAdminAccounts Dictionary
 accounts=$(./tools/api/get_users | jq \
-  --arg uuids $4 \
-  'select(.users[] as $users | ($uuids | split(",")) | map([$users[] == .] | any) | all)
-   | .users
-   | [.[]
-   | .["short_name"] = .user_shortname
-   | .["full_name"] = .user_longname]
-   | map(del(.uuid, .udid, .user_id, .auth_token, .user_shortname, .user_longname))')
+  --arg uuids "$4" \
+  '[.users[]
+  |select([.uuid] | inside(($uuids | split(","))))
+  |.["short_name"] = .user_shortname
+  |.["full_name"] = .user_longname
+  |del(.uuid, .udid, .user_id, .auth_token, .user_shortname, .user_longname)]'
+)
 
 # Make the AccountConfiguration Request
 jq -n \
