@@ -4,7 +4,7 @@ endpoint="v1/commands"
 jq -n \
   --arg request_type "InstallMedia" \
   --arg udid "$1" \
-  --arg itunes_store_id $2 \
+  --argjson itunes_store_id $2 \
   --arg media_url "$3" \
   --arg media_type "$4" \
   '.udid = $udid
