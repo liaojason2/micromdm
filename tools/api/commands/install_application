@@ -1,13 +1,74 @@
 #!/bin/bash
 source $MICROMDM_ENV_PATH
 endpoint="v1/commands"
+
+udid="$1"
+app="$2"
+change="$3"
+flags="$4"
+options="$5"
+config="$6"
+attrib="$7"
+
+# Determine App Type
+if [ "$app" != "" ]; then
+  # If number, then itunes_store_id
+  re='^[0-9]+$'
+  if [[ $app =~ $re ]]; then
+    itunes_store_id="$app"
+    # Must set options for app store app
+    if [ "$options" != "" ]; then
+      options="{\"purchase_method\":$options}"
+    else
+      options="{\"purchase_method\":1}"
+    fi
+  else
+    # If starts with http, then manifest_url
+    if [[ $app == http* ]]; then
+      manifest_url="$app"
+      options="null"
+    else
+      # Else bundle identifier
+      identifier="$app"
+      # Options must be 1 for bundle identifier
+      options="{\"purchase_method\":1}"
+    fi
+    itunes_store_id="null"
+  fi
+fi
+
+# Set optional json arguments to null if blank
+if [ "$flags" == "" ]; then
+  flags="null"
+fi
+if [ "$config" == "" ]; then
+  config="null"
+fi
+if [ "$attrib" == "" ]; then
+  attrib="null"
+fi
+
 jq -n \
   --arg request_type "InstallApplication" \
-  --arg udid "$1" \
-  --arg manifest_url "$2" \
+  --arg udid "$udid" \
+  --argjson itunes_store_id "$itunes_store_id" \
+  --arg identifier "$identifier" \
+  --arg manifest_url "$manifest_url" \
+  --arg change_management_state "$change" \
+  --argjson management_flags "$flags" \
+  --argjson options "$options" \
+  --argjson configuration "$config" \
+  --argjson attributes "$attrib" \
   '.udid = $udid
   |.request_type = $request_type
-  |.manifest_url = $manifest_url
+  |.itunes_store_id = $itunes_store_id
+  |if $identifier == "" then .identifier = null else .identifier = $identifier end
+  |if $manifest_url == "" then .manifest_url = null else .manifest_url = $manifest_url end
+  |if $change_management_state == "" then .change_management_state = null else .change_management_state = $change_management_state end
+  |.management_flags = $management_flags
+  |.options = $options
+  |.configuration = $configuration
+  |.attributes = $attributes
   '|\
   curl $CURL_OPTS \
     -H "Content-Type: application/json" \
