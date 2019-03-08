@@ -14421,7 +14421,7 @@ func (m *SetFirmwarePassword) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.NewPassword = ""
+			m.NewPassword = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
