@@ -1,0 +1,25 @@
+#!/bin/bash
+source $MICROMDM_ENV_PATH
+endpoint="v1/commands"
+
+# Usage:
+# key_type - "personal" or "institutional"
+# filevault_unlock - path to json dictionary file
+# new_certificate - path to certificate file
+# reply_encryption_certificate - path to certificate file
+
+jq -n \
+  --arg request_type "RotateFileVaultKey" \
+  --arg udid "$1" \
+  --arg key_type "$2" \
+  --argjson filevault_unlock "$(cat $3)" \
+  --arg new_certificate "$(cat $4)" \
+  --arg reply_encryption_certificate "$(cat $5)" \
+ '.udid = $udid
+  |.request_type = $request_type
+  |.key_type = $key_type
+  |.filevault_unlock = $filevault_unlock
+  |.new_certificate = $new_certificate
+  |.reply_encryption_certificate = $reply_encryption_certificate
+  '|\
+  curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
