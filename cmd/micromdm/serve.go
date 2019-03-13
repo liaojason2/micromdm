@@ -226,7 +226,7 @@ func serve(args []string) error {
 		profileEndpoints := profile.MakeServerEndpoints(profilesvc, basicAuthEndpointMiddleware)
 		profile.RegisterHTTPHandlers(r, profileEndpoints, options...)
 
-		queuesvc := queue.New()
+		queuesvc := queue.New(queue.Store{})
 		queueEndpoints := queue.MakeServerEndpoints(queuesvc, basicAuthEndpointMiddleware)
 		queue.RegisterHTTPHandlers(r, queueEndpoints, options...)
 
