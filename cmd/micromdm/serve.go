@@ -41,6 +41,7 @@ import (
 	"github.com/micromdm/micromdm/platform/device"
 	devicebuiltin "github.com/micromdm/micromdm/platform/device/builtin"
 	"github.com/micromdm/micromdm/platform/profile"
+	"github.com/micromdm/micromdm/platform/queue"
 	block "github.com/micromdm/micromdm/platform/remove"
 	"github.com/micromdm/micromdm/platform/user"
 	userbuiltin "github.com/micromdm/micromdm/platform/user/builtin"
@@ -224,6 +225,10 @@ func serve(args []string) error {
 		profilesvc := profile.New(sm.ProfileDB)
 		profileEndpoints := profile.MakeServerEndpoints(profilesvc, basicAuthEndpointMiddleware)
 		profile.RegisterHTTPHandlers(r, profileEndpoints, options...)
+
+		queuesvc := queue.New()
+		queueEndpoints := queue.MakeServerEndpoints(queuesvc, basicAuthEndpointMiddleware)
+		queue.RegisterHTTPHandlers(r, queueEndpoints, options...)
 
 		blueprintsvc := blueprint.New(bpDB)
 		blueprintEndpoints := blueprint.MakeServerEndpoints(blueprintsvc, basicAuthEndpointMiddleware)
