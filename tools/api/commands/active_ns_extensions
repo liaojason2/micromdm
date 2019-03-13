@@ -4,9 +4,15 @@ endpoint="v1/commands"
 jq -n \
   --arg request_type "ActiveNSExtensions" \
   --arg udid "$1" \
-  --arg filter_extensions_points "$2" \
+  --arg user_id "$2" \
+  --arg user_longname "$3" \
+  --arg user_shortname "$4" \
+  --arg filter_extensions_points "$5" \
  '.udid = $udid
   |.request_type = $request_type
+  |.user_id = $user_id
+  |.user_longname = $user_longname
+  |.user_shortname = $user_shortname
   |.filter_extensions_points = ($filter_extensions_points | split(","))
   '|\
   curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
