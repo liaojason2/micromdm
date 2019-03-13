@@ -60,9 +60,9 @@ type Command struct {
 	ScheduleOSUpdateScan            *ScheduleOSUpdateScan
 	ActiveNSExtensions              *ActiveNSExtensions
 	RotateFileVaultKey              *RotateFileVaultKey
-	UserID                          string `json:user_id,omitempty`
-	UserLongName                    string `json:user_longname,omitempty`
-	UserShortName                   string `json:user_shortname,omitempty`
+	UserID                          string `json:"user_id,omitempty"`
+	UserLongName                    string `json:"user_longname,omitempty"`
+	UserShortName                   string `json:"user_shortname,omitempty"`
 }
 
 // InstallProfile is an InstallProfile MDM Command
