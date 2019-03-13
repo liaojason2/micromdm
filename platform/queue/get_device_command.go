@@ -10,7 +10,8 @@ import (
 )
 
 func (svc *DeviceCommandService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
-	return &svc.store.DeviceCommand(udid)
+	device, err := svc.store.DeviceCommand(udid)
+	return &device, err
 }
 
 func decodeGetDeviceCommandRequest(ctx context.Context, r *http.Request) (interface{}, error) {
