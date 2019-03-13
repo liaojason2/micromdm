@@ -6,7 +6,10 @@ import (
 )
 
 type CommandRequest struct {
-	UDID string `json:"udid"`
+	UDID          string `json:"udid"`
+	UserID        string `json:user_id,omitempty`
+	UserLongName  string `json:user_longname,omitempty`
+	UserShortName string `json:user_shortname,omitempty`
 	*Command
 }
 
