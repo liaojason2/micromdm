@@ -6,10 +6,7 @@ import (
 )
 
 type CommandRequest struct {
-	UDID          string `json:"udid"`
-	UserID        string `json:user_id,omitempty`
-	UserLongName  string `json:user_longname,omitempty`
-	UserShortName string `json:user_shortname,omitempty`
+	UDID string `json:"udid"`
 	*Command
 }
 
@@ -63,6 +60,9 @@ type Command struct {
 	ScheduleOSUpdateScan            *ScheduleOSUpdateScan
 	ActiveNSExtensions              *ActiveNSExtensions
 	RotateFileVaultKey              *RotateFileVaultKey
+	UserID                          string `json:user_id,omitempty`
+	UserLongName                    string `json:user_longname,omitempty`
+	UserShortName                   string `json:user_shortname,omitempty`
 }
 
 // InstallProfile is an InstallProfile MDM Command
