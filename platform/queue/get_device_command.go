@@ -9,6 +9,10 @@ import (
 	"github.com/micromdm/micromdm/pkg/httputil"
 )
 
+func (svc *DeviceCommandService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
+	return DeviceCommand(udid)
+}
+
 func decodeGetDeviceCommandRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	var req string
 	err := httputil.DecodeJSONRequest(r, &req)
@@ -24,7 +28,7 @@ func decodeGetDeviceCommandResponse(_ context.Context, r *http.Response) (interf
 func MakeGetDeviceCommandEndpoint(svc Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		udid := request.(string)
-		return DeviceCommand(udid)
+		return GetDeviceCommand(ctx, udid)
 	}
 }
 
