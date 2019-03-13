@@ -32,7 +32,8 @@ func decodeGetDeviceCommandResponse(_ context.Context, r *http.Response) (interf
 
 func MakeGetDeviceCommandEndpoint(svc Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		return svc.GetDeviceCommand(ctx, "CEB23C56-E653-5B9F-8DC1-85120CA33CD5")
+		req := request.(getDeviceCommandRequest)
+		return svc.GetDeviceCommand(ctx, req.UDID)
 	}
 }
 
