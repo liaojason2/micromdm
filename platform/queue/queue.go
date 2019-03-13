@@ -193,6 +193,7 @@ func (db *Store) DeviceCommand(udid string) (*DeviceCommand, error) {
 		if v == nil {
 			return &notFound{"DeviceCommand", fmt.Sprintf("udid %s", udid)}
 		}
+		fmt.Printf("GOT HERE")
 		return UnmarshalDeviceCommand(v, &dev)
 	})
 	if err != nil {
