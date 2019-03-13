@@ -22,8 +22,8 @@ func RegisterHTTPHandlers(r *mux.Router, e Endpoints, options ...httptransport.S
 	// POST     /v1/queue		get the command queue for a device managed by the server
 
 	r.Methods("POST").Path("/v1/queue").Handler(httptransport.NewServer(
-		e.ListDevicesEndpoint,
-		decodeListDevicesRequest,
+		e.GetDeviceCommandEndpoint,
+		decodeGetDeviceCommandRequest,
 		httputil.EncodeJSONResponse,
 		options...,
 	))
