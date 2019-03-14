@@ -10,8 +10,9 @@ type Service interface {
 	GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error)
 }
 
-type QueueService struct {
+type QueueService interface {
 	publisher pubsub.Publisher
+	GetDeviceCommand(string) (DeviceCommand, error)
 }
 
 func New(pub pubsub.Publisher) *QueueService {
