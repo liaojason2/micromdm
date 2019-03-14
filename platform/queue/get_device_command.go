@@ -2,7 +2,6 @@ package queue
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
@@ -11,9 +10,6 @@ import (
 )
 
 func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
-	if svc.store == nil {
-		return nil, errors.New("Queue not configured yet.")
-	}
 	response, err := svc.store.DeviceCommand(udid)
 	return response, err
 }
