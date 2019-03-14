@@ -9,7 +9,7 @@ import (
 	"github.com/micromdm/micromdm/pkg/httputil"
 )
 
-func (db *Store) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
+func (db *Store) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
 	return db.DeviceCommand(udid)
 }
 
