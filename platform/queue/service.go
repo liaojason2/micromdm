@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error)
+	GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error)
 }
 
 type QueueService struct {
