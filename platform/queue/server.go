@@ -23,7 +23,7 @@ func RegisterHTTPHandlers(r *mux.Router, e Endpoints, options ...httptransport.S
 
 	r.Methods("POST").Path("/v1/queue").Handler(httptransport.NewServer(
 		e.GetDeviceCommandEndpoint,
-		decodeGetDeviceCommandEndpointRequest,
+		decodeGetDeviceCommandRequest,
 		httputil.EncodeJSONResponse,
 		options...,
 	))
