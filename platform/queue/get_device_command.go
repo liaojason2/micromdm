@@ -11,7 +11,10 @@ import (
 
 func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
 	response, err := svc.store.DeviceCommand(udid)
-	return response, err
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }
 
 type deviceCommandRequest struct {
