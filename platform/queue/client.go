@@ -22,7 +22,7 @@ func NewHTTPClient(instance, token string, logger log.Logger, opts ...httptransp
 			"POST",
 			httputil.CopyURL(u, "/v1/queue"),
 			httputil.EncodeRequestWithToken(token, httptransport.EncodeJSONRequest),
-			getDeviceCommandResponse,
+			decodeGetDeviceCommandResponse,
 			opts...,
 		).Endpoint()
 	}
