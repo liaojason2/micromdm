@@ -41,5 +41,8 @@ func MakeGetDeviceCommandEndpoint(svc Service) endpoint.Endpoint {
 func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
 	request := deviceCommandRequest{UDID: udid}
 	response, err := e.GetDeviceCommandEndpoint(ctx, request)
-	return response.(DeviceCommand), err
+	if err != nil {
+		return nil, err
+	}
+	return response.(DeviceCommand), nil
 }
