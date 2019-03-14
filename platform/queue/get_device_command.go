@@ -9,7 +9,7 @@ import (
 	"github.com/micromdm/micromdm/pkg/httputil"
 )
 
-func (db *Store) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
+func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
 	response, err := db.DeviceCommand(udid)
 	return *response, err
 }
