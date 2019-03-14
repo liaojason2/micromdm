@@ -18,6 +18,11 @@ type deviceCommandRequest struct {
 	UDID string `json:"udid"`
 }
 
+type deviceCommandResponse struct {
+	*DeviceCommand
+	Err error `json:"err,omitempty"`
+}
+
 func decodeGetDeviceCommandRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	var req deviceCommandRequest
 	err := httputil.DecodeJSONRequest(r, &req)
@@ -25,7 +30,7 @@ func decodeGetDeviceCommandRequest(ctx context.Context, r *http.Request) (interf
 }
 
 func decodeGetDeviceCommandResponse(_ context.Context, r *http.Response) (interface{}, error) {
-	var resp DeviceCommand
+	var resp deviceCommandResponse
 	err := httputil.DecodeJSONResponse(r, &resp)
 	return resp, err
 }
@@ -44,5 +49,5 @@ func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCo
 	if err != nil {
 		return nil, err
 	}
-	return *response.(DeviceCommand), nil
+	return response.(deviceCommandResponse), response.(deviceCommandResponse).Err
 }
