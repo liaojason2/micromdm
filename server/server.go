@@ -48,7 +48,7 @@ type Server struct {
 	TLSCertPath        string
 	SCEPDepot          *boltdepot.Depot
 	ProfileDB          profile.Store
-	QueueDB            pubsub.Publisher
+	QueueDB            queue.QueueStore
 	ConfigDB           config.Store
 	RemoveDB           block.Store
 	CommandWebhookURL  string
