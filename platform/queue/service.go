@@ -8,14 +8,10 @@ type Service interface {
 	GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error)
 }
 
-type QueueStore interface {
-	GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error)
-}
-
 type QueueService struct {
-	store QueueStore
+	store Store
 }
 
-func New(store QueueStore) *QueueService {
+func New(store Store) *QueueService {
 	return &QueueService{store: store}
 }
