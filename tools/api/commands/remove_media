@@ -4,13 +4,12 @@ endpoint="v1/commands"
 jq -n \
   --arg request_type "RemoveMedia" \
   --arg udid "$1" \
-  --arg itunes_store_id $2 \
-  --arg media_url "$3" \
-  --arg persistent_id "$4" \
+  --argjson itunes_store_id $2 \
+  --arg persistent_id "$3" \
   '.udid = $udid
   |.request_type = $request_type
   |.itunes_store_id = $itunes_store_id
-  |.media_url = $media_url
+  |.media_type = "Book"
   |.persistent_id = $persistent_id
   '|\
   curl $CURL_OPTS -u "micromdm:$API_TOKEN" "$SERVER_URL/$endpoint" -d@-
