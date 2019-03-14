@@ -14,9 +14,9 @@ type QueueService struct {
 	publisher pubsub.Publisher
 }
 
-func New(pub pubsub.Publisher) (*QueueService, error) {
+func New(pub pubsub.Publisher) *QueueService {
 	svc := QueueService{
 		publisher: pub,
 	}
-	return &svc, nil
+	return &svc
 }
