@@ -1,4 +1,4 @@
-package queue
+package dep
 
 import (
 	"context"
@@ -9,17 +9,16 @@ import (
 	"github.com/micromdm/micromdm/pkg/httputil"
 )
 
-type getDeviceCommandRequest struct {
+func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
+	return svc.DeviceCommand(udid)
+}
+
+type deviceCommandRequest struct {
 	UDID string `json:"udid"`
 }
 
-func (svc *DeviceCommandService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
-	device, err := svc.store.DeviceCommand(udid)
-	return *device, err
-}
-
 func decodeGetDeviceCommandRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	var req getDeviceCommandRequest
+	var req deviceCommandRequest
 	err := httputil.DecodeJSONRequest(r, &req)
 	return req, err
 }
@@ -32,12 +31,17 @@ func decodeGetDeviceCommandResponse(_ context.Context, r *http.Response) (interf
 
 func MakeGetDeviceCommandEndpoint(svc Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(getDeviceCommandRequest)
-		return svc.GetDeviceCommand(ctx, req.UDID)
+		req := request.(deviceCommandRequest)
+		response, err := svc.GetDeviceCommand(ctx, req.UDID)
+		return response, err
 	}
 }
 
-func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
-	response, err := e.GetDeviceCommandEndpoint(ctx, udid)
-	return response.(DeviceCommand), err
+func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
+	request := deviceCommandRequest{UDID: udid}
+	response, err := e.GetDeviceCommandEndpoint(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	return response, err
 }
