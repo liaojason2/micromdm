@@ -9,7 +9,7 @@ type Service interface {
 }
 
 type QueueStore interface {
-	GetDeviceCommand(string) (DeviceCommand, error)
+	GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error)
 }
 
 type QueueService struct {
