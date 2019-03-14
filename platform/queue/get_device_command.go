@@ -49,5 +49,5 @@ func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCo
 	if err != nil {
 		return nil, err
 	}
-	return response.(deviceCommandResponse), response.(deviceCommandResponse).Err
+	return response.(deviceCommandResponse).DeviceCommand, response.(deviceCommandResponse).Err
 }
