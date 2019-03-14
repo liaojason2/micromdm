@@ -10,7 +10,8 @@ import (
 )
 
 func (db *Store) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
-	return db.DeviceCommand(udid)
+	response, err := db.DeviceCommand(udid)
+	return *response, err
 }
 
 type deviceCommandRequest struct {
