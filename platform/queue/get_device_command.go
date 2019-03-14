@@ -10,7 +10,7 @@ import (
 )
 
 func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
-	response, err := db.DeviceCommand(udid)
+	response, err := svc.store.DeviceCommand(udid)
 	return *response, err
 }
 
