@@ -9,7 +9,7 @@ import (
 	"github.com/micromdm/micromdm/pkg/httputil"
 )
 
-func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
+func (svc *QueueService) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
 	response, err := svc.store.DeviceCommand(udid)
 	return *response, err
 }
@@ -38,7 +38,7 @@ func MakeGetDeviceCommandEndpoint(svc Service) endpoint.Endpoint {
 	}
 }
 
-func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (DeviceCommand, error) {
+func (e Endpoints) GetDeviceCommand(ctx context.Context, udid string) (*DeviceCommand, error) {
 	request := deviceCommandRequest{UDID: udid}
 	response, err := e.GetDeviceCommandEndpoint(ctx, request)
 	if err != nil {
