@@ -35,6 +35,8 @@ func topicFromMessage(messageType string) (string, error) {
 		return AuthenticateTopic, nil
 	case "TokenUpdate":
 		return TokenUpdateTopic, nil
+	case "SetBootstrapToken":
+		return SetBootstrapTokenTopic, nil
 	case "CheckOut":
 		return CheckoutTopic, nil
 	default:

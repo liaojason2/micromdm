@@ -16,6 +16,7 @@ message Command {
     string udid = 3;
     Authenticate authenticate = 4;
     TokenUpdate  token_update = 5;
+    SetBootstrapToken  set_bootstrap_token = 6;
 }
 
 message Authenticate {
@@ -40,4 +41,8 @@ message TokenUpdate {
     string user_long_name = 6;
     string user_short_name = 7;
     bool   not_on_console = 8;
+}
+
+message SetBootstrapToken {
+    bytes  bootstrap_token = 1;
 }

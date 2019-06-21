@@ -89,14 +89,15 @@ func (m *Event) GetParams() map[string]string {
 }
 
 type Command struct {
-	MessageType          string        `protobuf:"bytes,1,opt,name=message_type,json=messageType" json:"message_type,omitempty"`
-	Topic                string        `protobuf:"bytes,2,opt,name=topic" json:"topic,omitempty"`
-	Udid                 string        `protobuf:"bytes,3,opt,name=udid" json:"udid,omitempty"`
-	Authenticate         *Authenticate `protobuf:"bytes,4,opt,name=authenticate" json:"authenticate,omitempty"`
-	TokenUpdate          *TokenUpdate  `protobuf:"bytes,5,opt,name=token_update,json=tokenUpdate" json:"token_update,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	MessageType          string              `protobuf:"bytes,1,opt,name=message_type,json=messageType" json:"message_type,omitempty"`
+	Topic                string              `protobuf:"bytes,2,opt,name=topic" json:"topic,omitempty"`
+	Udid                 string              `protobuf:"bytes,3,opt,name=udid" json:"udid,omitempty"`
+	Authenticate         *Authenticate       `protobuf:"bytes,4,opt,name=authenticate" json:"authenticate,omitempty"`
+	TokenUpdate          *TokenUpdate        `protobuf:"bytes,5,opt,name=token_update,json=tokenUpdate" json:"token_update,omitempty"`
+	SetBootstrapToken    *SetBootstrapToken  `protobuf:"bytes,6,opt,name=set_bootstrap_token,json=setBootstrapToken" json:"set_bootstrap_token,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Command) Reset()         { *m = Command{} }
@@ -154,6 +155,13 @@ func (m *Command) GetAuthenticate() *Authenticate {
 func (m *Command) GetTokenUpdate() *TokenUpdate {
 	if m != nil {
 		return m.TokenUpdate
+	}
+	return nil
+}
+
+func (m *Command) GetSetBootstrapToken() *SetBootstrapToken {
+	if m != nil {
+		return m.SetBootstrapToken
 	}
 	return nil
 }
@@ -362,12 +370,51 @@ func (m *TokenUpdate) GetNotOnConsole() bool {
 	return false
 }
 
+type SetBootstrapToken struct {
+	BootstrapToken        []byte   `protobuf:"bytes,1,opt,name=bootstrap_token,proto3" json:"bootstrap_token,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
+	XXX_unrecognized      []byte   `json:"-"`
+	XXX_sizecache         int32    `json:"-"`
+}
+
+func (m *SetBootstrapToken) Reset()         { *m = SetBootstrapToken{} }
+func (m *SetBootstrapToken) String() string { return proto.CompactTextString(m) }
+func (*SetBootstrapToken) ProtoMessage()    {}
+func (*SetBootstrapToken) Descriptor() ([]byte, []int) {
+	return fileDescriptor_checkin_7e1d11c144d2ce7a, []int{4}
+}
+func (m *SetBootstrapToken) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetBootstrapToken.Unmarshal(m, b)
+}
+func (m *SetBootstrapToken) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetBootstrapToken.Marshal(b, m, deterministic)
+}
+func (dst *SetBootstrapToken) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetBootstrapToken.Merge(dst, src)
+}
+func (m *SetBootstrapToken) XXX_Size() int {
+	return xxx_messageInfo_SetBootstrapToken.Size(m)
+}
+func (m *SetBootstrapToken) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetBootstrapToken.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetBootstrapToken proto.InternalMessageInfo
+
+func (m *SetBootstrapToken) GetBootstrapToken() []byte {
+	if m != nil {
+		return m.BootstrapToken
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Event)(nil), "checkinproto.Event")
 	proto.RegisterMapType((map[string]string)(nil), "checkinproto.Event.ParamsEntry")
 	proto.RegisterType((*Command)(nil), "checkinproto.Command")
 	proto.RegisterType((*Authenticate)(nil), "checkinproto.Authenticate")
 	proto.RegisterType((*TokenUpdate)(nil), "checkinproto.TokenUpdate")
+	proto.RegisterType((*SetBootstrapToken)(nil), "checkinproto.SetBootstrapToken")
 }
 
 func init() { proto.RegisterFile("checkin.proto", fileDescriptor_checkin_7e1d11c144d2ce7a) }

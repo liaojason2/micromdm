@@ -17,6 +17,7 @@ const (
 	ConnectTopic      = "mdm.Connect"
 	AuthenticateTopic = "mdm.Authenticate"
 	TokenUpdateTopic  = "mdm.TokenUpdate"
+	SetBootstrapTokenTopic  = "mdm.SetBootstrapToken"
 	CheckoutTopic     = "mdm.CheckOut"
 )
 

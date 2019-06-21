@@ -20,12 +20,13 @@ type CheckinEvent struct {
 // CheckinRequest represents an MDM checkin command struct.
 type CheckinCommand struct {
 	// MessageType can be either Authenticate,
-	// TokenUpdate or CheckOut
+	// TokenUpdate, SetBootstrapToken or CheckOut
 	MessageType string
 	Topic       string
 	UDID        string
 	auth
 	update
+	bootstrap
 }
 
 // Authenticate Message Type
@@ -57,6 +58,11 @@ type userTokenUpdate struct {
 	UserLongName  string `plist:",omitempty"`
 	UserShortName string `plist:",omitempty"`
 	NotOnConsole  bool   `plist:",omitempty"`
+}
+
+// SetBootstrapToken Mesage Type
+type bootstrap struct {
+	BootstrapToken        hexData
 }
 
 // data decodes to []byte,
@@ -99,6 +105,10 @@ func MarshalCheckinEvent(e *CheckinEvent) ([]byte, error) {
 			UserLongName:          e.Command.UserLongName,
 			UserShortName:         e.Command.UserShortName,
 			NotOnConsole:          e.Command.NotOnConsole,
+		}
+	case "SetBootstrapToken":
+		command.SetBootstrapToken = &checkinproto.SetBootstrapToken{
+			BootstrapToken:                 e.Command.Token,
 		}
 	}
 	return proto.Marshal(&checkinproto.Event{
@@ -148,6 +158,8 @@ func UnmarshalCheckinEvent(data []byte, e *CheckinEvent) error {
 		e.Command.UserLongName = pb.Command.TokenUpdate.UserLongName
 		e.Command.UserShortName = pb.Command.TokenUpdate.UserShortName
 		e.Command.NotOnConsole = pb.Command.TokenUpdate.NotOnConsole
+	case "SetBootstrapToken":
+		e.Command.BootstrapToken = pb.Command.SetBootstrapToken.BootstrapToken
 	}
 	e.Raw = pb.GetRaw()
 	e.Params = pb.GetParams()
