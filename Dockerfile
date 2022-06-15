@@ -1,3 +1,4 @@
+#Build MicroMDM
 FROM golang:buster AS build
 
 WORKDIR /src
@@ -26,6 +27,8 @@ RUN apt-get install -y make gcsfuse
 COPY --from=build /src/build/linux/micromdm /usr/bin
 
 COPY --from=build /src/entrypoint.sh .
+
+COPY --from=build /src/bricks-micromdm.json .
 
 EXPOSE 80 443 2195 2196 2197 5223
 
