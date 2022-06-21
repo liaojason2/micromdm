@@ -25,6 +25,8 @@ func (c *Command) MarshalJSON() ([]byte, error) {
 		"AvailableOSUpdates",
 		"NSExtensionMappings",
 		"OSUpdateStatus",
+		"EnableRemoteDesktop",
+		"DisableRemoteDesktop",
 		"ActivationLockBypassCode":
 		var x = struct {
 			RequestType string `json:"request_type"`
@@ -345,6 +347,15 @@ func (c *Command) MarshalJSON() ([]byte, error) {
 		}{
 			RequestType:        c.RequestType,
 			RotateFileVaultKey: c.RotateFileVaultKey,
+		}
+		return json.Marshal(&x)
+	case "SetBootstrapToken":
+		var x = struct {
+			RequestType string `json:"request_type"`
+			*SetBootstrapToken
+		}{
+			RequestType:       c.RequestType,
+			SetBootstrapToken: c.SetBootstrapToken,
 		}
 		return json.Marshal(&x)
 	default:

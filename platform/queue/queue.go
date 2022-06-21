@@ -25,7 +25,8 @@ const (
 
 type Store struct {
 	*bolt.DB
-	logger log.Logger
+	logger         log.Logger
+	withoutHistory bool
 }
 
 type Option func(*Store)
@@ -33,6 +34,12 @@ type Option func(*Store)
 func WithLogger(logger log.Logger) Option {
 	return func(s *Store) {
 		s.logger = logger
+	}
+}
+
+func WithoutHistory() Option {
+	return func(s *Store) {
+		s.withoutHistory = true
 	}
 }
 
@@ -48,11 +55,18 @@ func (db *Store) Next(ctx context.Context, resp mdm.Response) ([]byte, error) {
 }
 
 func (db *Store) nextCommand(ctx context.Context, resp mdm.Response) (*Command, error) {
+	// The UDID is the primary key for the queue.
+	// Depending on the enrollment type, replace the UDID with a different ID type.
+	// UserID for managed user channel
+	// EnrollmentID for BYOD User Enrollment.
 	udid := resp.UDID
 	if resp.UserID != nil {
-		// use the user id for user level commands
 		udid = *resp.UserID
 	}
+	if resp.EnrollmentID != nil {
+		udid = *resp.EnrollmentID
+	}
+
 	dc, err := db.DeviceCommand(udid)
 	if err != nil {
 		if isNotFound(err) {
@@ -76,12 +90,15 @@ func (db *Store) nextCommand(ctx context.Context, resp mdm.Response) (*Command, 
 	case "Acknowledged":
 		// move to completed, send next
 		x, a := cut(dc.Commands, resp.CommandUUID)
-		x.Acknowledged = time.Now().UTC()
 		dc.Commands = a
 		if x == nil {
 			break
 		}
-		dc.Completed = append(dc.Completed, *x)
+		if !db.withoutHistory {
+			x.Acknowledged = time.Now().UTC()
+			dc.Completed = append(dc.Completed, *x)
+		}
+
 	case "Error":
 		// move to failed, send next
 		x, a := cut(dc.Commands, resp.CommandUUID)
@@ -89,7 +106,9 @@ func (db *Store) nextCommand(ctx context.Context, resp mdm.Response) (*Command, 
 		if x == nil { // must've already bin ackd
 			break
 		}
-		dc.Failed = append(dc.Failed, *x)
+		if !db.withoutHistory {
+			dc.Failed = append(dc.Failed, *x)
+		}
 
 	case "CommandFormatError":
 		// move to failed
@@ -98,7 +117,9 @@ func (db *Store) nextCommand(ctx context.Context, resp mdm.Response) (*Command, 
 		if x == nil {
 			break
 		}
-		dc.Failed = append(dc.Failed, *x)
+		if !db.withoutHistory {
+			dc.Failed = append(dc.Failed, *x)
+		}
 
 	case "Idle":
 

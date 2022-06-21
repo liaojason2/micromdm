@@ -48,6 +48,8 @@ func (c *Command) UnmarshalJSON(data []byte) error {
 		"AvailableOSUpdates",
 		"NSExtensionMappings",
 		"OSUpdateStatus",
+		"EnableRemoteDesktop",
+		"DisableRemoteDesktop",
 		"ActivationLockBypassCode":
 		return nil
 	case "InstallProfile":
@@ -294,6 +296,13 @@ func (c *Command) UnmarshalJSON(data []byte) error {
 			return errors.Wrapf(err, "mdm: unmarshal %s command json", c.RequestType)
 		}
 		c.RotateFileVaultKey = &payload
+		return nil
+	case "SetBootstrapToken":
+		var payload SetBootstrapToken
+		if err := json.Unmarshal(data, &payload); err != nil {
+			return errors.Wrapf(err, "mdm: unmarshal %s command json", c.RequestType)
+		}
+		c.SetBootstrapToken = &payload
 		return nil
 	default:
 		return fmt.Errorf("mdm: unknown RequestType: %s", c.RequestType)

@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 
 	"github.com/micromdm/micromdm/mdm"
 	"github.com/micromdm/micromdm/platform/dep/sync"
@@ -113,7 +113,7 @@ func (w *Worker) updateFromDEPSync(ctx context.Context, message []byte) error {
 		}
 
 		if dev.UUID == "" {
-			dev.UUID = uuid.NewV4().String()
+			dev.UUID = uuid.New().String()
 		}
 
 		dev.SerialNumber = dd.SerialNumber
@@ -141,6 +141,10 @@ func (w *Worker) updateFromAcknowledge(ctx context.Context, message []byte) erro
 		return errors.Wrap(err, "unmarshal acknowledge event")
 	}
 
+	if ev.Response.EnrollmentID != nil {
+		return nil
+	}
+
 	dev, err := w.db.DeviceByUDID(ctx, ev.Response.UDID)
 	if err != nil {
 		return errors.Wrapf(err, "retrieve device with udid %s", ev.Response.UDID)
@@ -156,6 +160,10 @@ func (w *Worker) updateFromCheckout(ctx context.Context, message []byte) error {
 	var ev mdm.CheckinEvent
 	if err := mdm.UnmarshalCheckinEvent(message, &ev); err != nil {
 		return errors.Wrap(err, "unmarshal checkin event")
+	}
+
+	if ev.Command.EnrollmentID != "" {
+		return nil
 	}
 
 	dev, err := w.db.DeviceByUDID(ctx, ev.Command.UDID)
@@ -177,8 +185,8 @@ func (w *Worker) updateFromTokenUpdate(ctx context.Context, message []byte) erro
 		return errors.Wrap(err, "unmarshal checkin event")
 	}
 
-	if ev.Command.UserID != "" {
-		// do not process user checkin events while updating device records.
+	// do not process managed user, or user enrollment checkin events while updating device records.
+	if ev.Command.UserID != "" || ev.Command.EnrollmentID != "" {
 		return nil
 	}
 
@@ -213,6 +221,10 @@ func (w *Worker) updateFromAuthenticate(ctx context.Context, message []byte) err
 		return errors.Wrap(err, "unmarshal checkin event")
 	}
 
+	if ev.Command.EnrollmentID != "" {
+		return nil
+	}
+
 	device, reenrolling, err := getOrCreateDevice(ctx, w.db, ev.Command.SerialNumber, ev.Command.UDID)
 	if err != nil {
 		return errors.Wrap(err, "get device for authenticate event")
@@ -231,7 +243,7 @@ func (w *Worker) updateFromAuthenticate(ctx context.Context, message []byte) err
 	}
 
 	if device.UUID == "" {
-		device.UUID = uuid.NewV4().String()
+		device.UUID = uuid.New().String()
 	}
 	device.UDID = ev.Command.UDID
 	device.OSVersion = ev.Command.OSVersion

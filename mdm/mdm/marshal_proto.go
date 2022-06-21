@@ -43,6 +43,8 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 		"AvailableOSUpdates",
 		"NSExtensionMappings",
 		"OSUpdateStatus",
+		"EnableRemoteDesktop",
+		"DisableRemoteDesktop",
 		"ActivationLockBypassCode":
 
 	case "InstallProfile":
@@ -150,8 +152,47 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 			},
 		}
 	case "InstallEnterpriseApplication":
+		var pbManifest *mdmproto.Manifest
+		if cmd.InstallEnterpriseApplication.Manifest != nil {
+			pbManifest = &(mdmproto.Manifest{})
+			for _, item := range cmd.InstallEnterpriseApplication.Manifest.ManifestItems {
+				var pbManifestItem mdmproto.ManifestItem
+				for _, asset := range item.Assets {
+					pbAsset := mdmproto.Asset{
+						Kind:       asset.Kind,
+						Md5Size:    asset.MD5Size,
+						Md5S:       asset.MD5s,
+						Sha256Size: asset.SHA256Size,
+						Sha256S:    asset.SHA256s,
+						Url:        asset.URL,
+					}
+					pbManifestItem.Assets = append(pbManifestItem.Assets, &pbAsset)
+				}
+				if item.Metadata != nil {
+					pbManifestItem.Metadata = &(mdmproto.Metadata{
+						BundleIdentifier: item.Metadata.BundleInfo.BundleIdentifier,
+						BundleVersion:    item.Metadata.BundleInfo.BundleVersion,
+						Kind:             item.Metadata.Kind,
+						SizeInBytes:      item.Metadata.SizeInBytes,
+						Title:            item.Metadata.Title,
+						Subtitle:         item.Metadata.Subtitle,
+					})
+					for _, bundleInfo := range item.Metadata.Items {
+						bpBundleInfo := &(mdmproto.BundleInfo{
+							BundleIdentifier: bundleInfo.BundleIdentifier,
+							BundleVersion:    bundleInfo.BundleVersion,
+						})
+						pbManifestItem.Metadata.Items = append(pbManifestItem.Metadata.Items, bpBundleInfo)
+					}
+				}
+				if len(pbManifestItem.Assets) > 0 || pbManifestItem.Metadata != nil {
+					pbManifest.ManifestItems = append(pbManifest.ManifestItems, &pbManifestItem)
+				}
+			}
+		}
 		cmdproto.Request = &mdmproto.Command_InstallEnterpriseApplication{
 			InstallEnterpriseApplication: &mdmproto.InstallEnterpriseApplication{
+				Manifest:                       pbManifest,
 				ManifestUrl:                    emptyStringIfNil(cmd.InstallEnterpriseApplication.ManifestURL),
 				ManifestUrlPinningCerts:        cmd.InstallEnterpriseApplication.ManifestURLPinningCerts,
 				PinningRevocationCheckRequired: falseIfNil(cmd.InstallEnterpriseApplication.PinningRevocationCheckRequired),
@@ -165,7 +206,7 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 		)
 		if cmd.InstallApplication.Options != nil {
 			options = &mdmproto.InstallApplicationOptions{
-				PurchaseMethod: cmd.InstallApplication.Options.PurchaseMethod,
+				PurchaseMethod: zeroInt64IfNil(cmd.InstallApplication.Options.PurchaseMethod),
 			}
 		}
 		if cmd.InstallApplication.Configuration != nil {
@@ -200,6 +241,10 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 			AccountConfiguration: &mdmproto.AccountConfiguration{
 				SkipPrimarySetupAccountCreation:     cmd.AccountConfiguration.SkipPrimarySetupAccountCreation,
 				SetPrimarySetupAccountAsRegularUser: cmd.AccountConfiguration.SetPrimarySetupAccountAsRegularUser,
+				DontAutoPopulatePrimaryAccountInfo:  cmd.AccountConfiguration.DontAutoPopulatePrimaryAccountInfo,
+				LockPrimaryAccountInfo:              cmd.AccountConfiguration.LockPrimaryAccountInfo,
+				PrimaryAccountFullName:              cmd.AccountConfiguration.PrimaryAccountFullName,
+				PrimaryAccountUserName:              cmd.AccountConfiguration.PrimaryAccountUserName,
 				AutoSetupAdminAccounts:              autosetupadminaccounts,
 			},
 		}
@@ -284,6 +329,12 @@ func commandToProto(cmd *Command) (*mdmproto.Command, error) {
 				CurrentPassword: cmd.SetFirmwarePassword.CurrentPassword,
 				NewPassword:     cmd.SetFirmwarePassword.NewPassword,
 				AllowOroms:      cmd.SetFirmwarePassword.AllowOroms,
+			},
+		}
+	case "SetBootstrapToken":
+		cmdproto.Request = &mdmproto.Command_SetBootstrapToken{
+			SetBootstrapToken: &mdmproto.SetBootstrapToken{
+				BootstrapToken: cmd.SetBootstrapToken.BootstrapToken,
 			},
 		}
 	case "VerifyFirmwarePassword":

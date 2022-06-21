@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 )
 
 func (svc *MDMService) Checkin(ctx context.Context, event CheckinEvent) error {
+	// reject user settings at the loginwindow.
+	// https://github.com/micromdm/micromdm/pull/379
 	if event.Command.MessageType == "UserAuthenticate" {
 		return &rejectUserAuth{}
 	}
@@ -85,7 +87,7 @@ func decodeCheckinRequest(ctx context.Context, r *http.Request) (interface{}, er
 	}
 
 	event := CheckinEvent{
-		ID:      uuid.NewV4().String(),
+		ID:      uuid.New().String(),
 		Time:    time.Now().UTC(),
 		Command: cmd,
 		Params:  params,
