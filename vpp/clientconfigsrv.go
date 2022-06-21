@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -116,9 +115,7 @@ func (c *Client) GetClientContext(options ClientConfigSrvOptions) (*ClientContex
 }
 
 // Sets the values that determine which mdm server is associated with a VPP account token
-func (c *Client) SetClientContext(serverURL string) (*ClientContext, error) {
-	// Generate a UUID that is tracked to ensure VPP licenses are up to date
-	uuid := uuid.New().String()
+func (c *Client) SetClientContext(options ClientConfigSrvOptions) (*ClientContext, error) {
 
 	// Generate a ClientContext string with the UDID and the current ServerPublicURL
 	context := ClientContext{c.ServerPublicURL, c.VPPToken.UDID}
