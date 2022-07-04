@@ -2,6 +2,7 @@ package vpp
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -39,13 +40,15 @@ type VPPToken struct {
 }
 
 func NewClient(token VPPToken, serverUrl string) (*Client, error) {
-
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	baseURL, _ := url.Parse(defaultBaseURL)
 	c := Client{
 		VPPToken:        token,
 		ServerPublicURL: serverUrl,
 		UserAgent:       path.Join("micromdm", version),
-		Client:          http.DefaultClient,
+		Client:          &http.Client{Transport: tr},
 		BaseURL:         baseURL,
 	}
 
