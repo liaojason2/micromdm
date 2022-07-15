@@ -14,7 +14,6 @@ COPY . .
 RUN make deps
 RUN make
 
-
 FROM alpine:latest
 
 RUN apk --update add ca-certificates
