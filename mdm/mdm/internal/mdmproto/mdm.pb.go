@@ -1737,10 +1737,12 @@ func (*InstallApplicationConfiguration) Descriptor() ([]byte, []int) {
 type InstallApplicationAttributes struct {
 }
 
-func (m *InstallApplicationAttributes) Reset()                    { *m = InstallApplicationAttributes{} }
-func (m *InstallApplicationAttributes) String() string            { return proto.CompactTextString(m) }
-func (*InstallApplicationAttributes) ProtoMessage()               {}
-func (*InstallApplicationAttributes) Descriptor() ([]byte, []int) { return fileDescriptorMdm, []int{19} }
+func (m *InstallApplicationAttributes) Reset()         { *m = InstallApplicationAttributes{} }
+func (m *InstallApplicationAttributes) String() string { return proto.CompactTextString(m) }
+func (*InstallApplicationAttributes) ProtoMessage()    {}
+func (*InstallApplicationAttributes) Descriptor() ([]byte, []int) {
+	return fileDescriptorMdm, []int{19}
+}
 
 type InstallEnterpriseApplication struct {
 	Manifest                       *Manifest `protobuf:"bytes,1,opt,name=manifest" json:"manifest,omitempty"`
@@ -1749,10 +1751,12 @@ type InstallEnterpriseApplication struct {
 	PinningRevocationCheckRequired bool      `protobuf:"varint,4,opt,name=pinning_revocation_check_required,json=pinningRevocationCheckRequired,proto3" json:"pinning_revocation_check_required,omitempty"`
 }
 
-func (m *InstallEnterpriseApplication) Reset()                    { *m = InstallEnterpriseApplication{} }
-func (m *InstallEnterpriseApplication) String() string            { return proto.CompactTextString(m) }
-func (*InstallEnterpriseApplication) ProtoMessage()               {}
-func (*InstallEnterpriseApplication) Descriptor() ([]byte, []int) { return fileDescriptorMdm, []int{20} }
+func (m *InstallEnterpriseApplication) Reset()         { *m = InstallEnterpriseApplication{} }
+func (m *InstallEnterpriseApplication) String() string { return proto.CompactTextString(m) }
+func (*InstallEnterpriseApplication) ProtoMessage()    {}
+func (*InstallEnterpriseApplication) Descriptor() ([]byte, []int) {
+	return fileDescriptorMdm, []int{20}
+}
 
 func (m *InstallEnterpriseApplication) GetManifest() *Manifest {
 	if m != nil {
@@ -2411,10 +2415,12 @@ type ApplicationAttributesSetting struct {
 	ApplicationAttributes *ApplicationAttributes `protobuf:"bytes,2,opt,name=application_attributes,json=applicationAttributes" json:"application_attributes,omitempty"`
 }
 
-func (m *ApplicationAttributesSetting) Reset()                    { *m = ApplicationAttributesSetting{} }
-func (m *ApplicationAttributesSetting) String() string            { return proto.CompactTextString(m) }
-func (*ApplicationAttributesSetting) ProtoMessage()               {}
-func (*ApplicationAttributesSetting) Descriptor() ([]byte, []int) { return fileDescriptorMdm, []int{42} }
+func (m *ApplicationAttributesSetting) Reset()         { *m = ApplicationAttributesSetting{} }
+func (m *ApplicationAttributesSetting) String() string { return proto.CompactTextString(m) }
+func (*ApplicationAttributesSetting) ProtoMessage()    {}
+func (*ApplicationAttributesSetting) Descriptor() ([]byte, []int) {
+	return fileDescriptorMdm, []int{42}
+}
 
 func (m *ApplicationAttributesSetting) GetIdentifier() string {
 	if m != nil {
@@ -2624,10 +2630,12 @@ type ManagedApplicationAttributes struct {
 	Identifiers []string `protobuf:"bytes,1,rep,name=identifiers" json:"identifiers,omitempty"`
 }
 
-func (m *ManagedApplicationAttributes) Reset()                    { *m = ManagedApplicationAttributes{} }
-func (m *ManagedApplicationAttributes) String() string            { return proto.CompactTextString(m) }
-func (*ManagedApplicationAttributes) ProtoMessage()               {}
-func (*ManagedApplicationAttributes) Descriptor() ([]byte, []int) { return fileDescriptorMdm, []int{54} }
+func (m *ManagedApplicationAttributes) Reset()         { *m = ManagedApplicationAttributes{} }
+func (m *ManagedApplicationAttributes) String() string { return proto.CompactTextString(m) }
+func (*ManagedApplicationAttributes) ProtoMessage()    {}
+func (*ManagedApplicationAttributes) Descriptor() ([]byte, []int) {
+	return fileDescriptorMdm, []int{54}
+}
 
 func (m *ManagedApplicationAttributes) GetIdentifiers() []string {
 	if m != nil {
