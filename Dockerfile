@@ -22,8 +22,6 @@ RUN apk --update add ca-certificates
 COPY --from=builder /go/src/github.com/micromdm/micromdm/build/linux/micromdm /usr/bin/
 COPY --from=builder /go/src/github.com/micromdm/micromdm/build/linux/mdmctl /usr/bin/
 
-EXPOSE 80 443 2195 2196 2197 5223
-
+EXPOSE 80 443
 VOLUME ["/var/db/micromdm"]
-
 CMD ["micromdm", "serve"]
