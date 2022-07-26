@@ -1,8 +1,8 @@
 package mdm
 
 import (
+	"github.com/google/uuid"
 	"github.com/micromdm/micromdm/mdm/appmanifest"
-	uuid "github.com/satori/go.uuid"
 )
 
 type CommandRequest struct {
@@ -17,7 +17,7 @@ type CommandPayload struct {
 
 func NewCommandPayload(request *CommandRequest) (*CommandPayload, error) {
 	payload := &CommandPayload{
-		CommandUUID: uuid.NewV4().String(),
+		CommandUUID: uuid.New().String(),
 		Command:     request.Command,
 	}
 	return payload, nil
@@ -60,6 +60,7 @@ type Command struct {
 	ScheduleOSUpdateScan            *ScheduleOSUpdateScan
 	ActiveNSExtensions              *ActiveNSExtensions
 	RotateFileVaultKey              *RotateFileVaultKey
+	SetBootstrapToken               *SetBootstrapToken
 }
 
 // InstallProfile is an InstallProfile MDM Command
@@ -143,13 +144,13 @@ type InstallApplication struct {
 	ManagementFlags       *int                             `plist:",omitempty" json:"management_flags,omitempty"`
 	ChangeManagementState *string                          `plist:",omitempty" json:"change_management_state,omitempty"`
 	ManifestURL           *string                          `plist:",omitempty" json:"manifest_url,omitempty"`
-	Options               *InstallApplicationOptions       `plist:",omitempty" json:"options,omitempty"`
+	Options               *InstallApplicationOptions       `plist:"Options,omitempty" json:"options,omitempty"`
 	Configuration         *InstallApplicationConfiguration `plist:",omitempty" json:"configuration,omitempty"`
 	Attributes            *InstallApplicationAttributes    `plist:",omitempty" json:"attributes,omitempty"`
 }
 
 type InstallApplicationOptions struct {
-	PurchaseMethod int64 `plist:",omitempty" json:"purchase_method,omitempty"`
+	PurchaseMethod *int64 `plist:"PurchaseMethod,omitempty" json:"purchase_method,omitempty"`
 }
 
 type InstallApplicationConfiguration struct{}
@@ -158,6 +159,10 @@ type InstallApplicationAttributes struct{}
 type AccountConfiguration struct {
 	SkipPrimarySetupAccountCreation     bool           `plist:",omitempty" json:"skip_primary_setup_account_creation,omitempty"`
 	SetPrimarySetupAccountAsRegularUser bool           `plist:",omitempty" json:"set_primary_setup_account_as_regular_user,omitempty"`
+	DontAutoPopulatePrimaryAccountInfo  bool           `plist:",omitempty" json:"dont_auto_populate_primary_account_info,omitempty"`
+	LockPrimaryAccountInfo              bool           `plist:",omitempty" json:"lock_primary_account_info,omitempty"`
+	PrimaryAccountFullName              string         `plist:",omitempty" json:"primary_account_full_name,omitempty"`
+	PrimaryAccountUserName              string         `plist:",omitempty" json:"primary_account_user_name,omitempty"`
 	AutoSetupAdminAccounts              []AdminAccount `plist:",omitempty" json:"auto_setup_admin_accounts,omitempty"`
 }
 
@@ -248,6 +253,10 @@ type VerifyFirmwarePassword struct {
 type SetAutoAdminPassword struct {
 	GUID         string `plist:",omitempty" json:"guid,omitempty"`
 	PasswordHash []byte `plist:"passwordHash" json:"password_hash"`
+}
+
+type SetBootstrapToken struct {
+	BootstrapToken string `plist:",omitempty" json:"bootstrap_token,omitempty"`
 }
 
 type OSUpdate struct {

@@ -34,6 +34,8 @@ func (c *Command) UnmarshalPlist(unmarshal func(i interface{}) error) error {
 		"AvailableOSUpdates",
 		"NSExtensionMappings",
 		"OSUpdateStatus",
+		"EnableRemoteDesktop",
+		"DisableRemoteDesktop",
 		"ActivationLockBypassCode":
 		return nil
 	case "InstallProfile":
@@ -280,6 +282,13 @@ func (c *Command) UnmarshalPlist(unmarshal func(i interface{}) error) error {
 			return errors.Wrapf(err, "mdm: unmarshal %s command plist", requestType.RequestType)
 		}
 		c.RotateFileVaultKey = &payload
+		return nil
+	case "SetBootstrapToken":
+		var payload SetBootstrapToken
+		if err := unmarshal(&payload); err != nil {
+			return errors.Wrapf(err, "mdm: unmarshal %s command plist", requestType.RequestType)
+		}
+		c.SetBootstrapToken = &payload
 		return nil
 	default:
 		return fmt.Errorf("mdm: unknown RequestType: %s", requestType.RequestType)

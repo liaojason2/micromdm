@@ -13,7 +13,7 @@ import (
 type depDevicesTableOutput struct{ w *tabwriter.Writer }
 
 func (out *depDevicesTableOutput) BasicHeader() {
-	fmt.Fprintf(out.w, "SerialNumber\tModel\tProfileStatus\tProfileUUID\n")
+	fmt.Fprintf(out.w, "SerialNumber\tModel\tDeviceFamily\tProfileStatus\tProfileUUID\n")
 }
 
 func (out *depDevicesTableOutput) BasicFooter() {
@@ -22,14 +22,14 @@ func (out *depDevicesTableOutput) BasicFooter() {
 
 func (cmd *getCommand) getDEPDevices(args []string) error {
 	flagset := flag.NewFlagSet("dep-devices", flag.ExitOnError)
-	flSerials := flagset.String("serials", "", "comma separated list of device serials")
+	flSerials := flagset.String("serials", "", "device serial, optionally comma-separated")
 	flagset.Usage = usageFor(flagset, "mdmctl get dep-devices [flags]")
 	if err := flagset.Parse(args); err != nil {
 		return err
 	}
 	if *flSerials == "" {
 		flagset.Usage()
-		return errors.New("bad input: must provide a comma separated list of DEP serials")
+		return errors.New("bad input: must provide a comma-separated list of DEP serials")
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
 	out := &depDevicesTableOutput{w}
@@ -42,7 +42,7 @@ func (cmd *getCommand) getDEPDevices(args []string) error {
 		return err
 	}
 	for _, d := range resp.Devices {
-		fmt.Fprintf(out.w, "%s\t%s\t%s\t%s\n", d.SerialNumber, d.Model, d.ProfileStatus, d.ProfileUUID)
+		fmt.Fprintf(out.w, "%s\t%s\t%s\t%s\t%s\n", d.SerialNumber, d.Model, d.DeviceFamily, d.ProfileStatus, d.ProfileUUID)
 	}
 	return nil
 }

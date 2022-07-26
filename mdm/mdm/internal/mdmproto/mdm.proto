@@ -28,6 +28,8 @@ message Command {
      - DeviceConfigured
      - AvailableOSUpdates
      - NSExtensionMappings
+     - EnableRemoteDesktop
+     - DisableRemoteDesktop
      - ActivationLockBypassCode
    */
   oneof request {
@@ -66,6 +68,7 @@ message Command {
     ActiveNSExtensions active_ns_extensions = 34;
     RotateFileVaultKey rotate_filevault_key = 35;
     InstallEnterpriseApplication install_enterprise_application = 36;
+    SetBootstrapToken set_bootstrap_token = 37;
   }
 }
 
@@ -177,6 +180,8 @@ message Asset {
   int64 md5_size = 2;
   repeated string md5s = 3;
   string url = 4;
+  int64 sha256_size = 5;
+  repeated string sha256s = 6;
 }
 
 message Metadata {
@@ -186,6 +191,7 @@ message Metadata {
   string kind = 4;
   string subtitle = 5;
   string title = 6;
+  int64 size_in_bytes = 7;
 }
 
 message BundleInfo {
@@ -218,6 +224,10 @@ message ValidateApplications {
 message AccountConfiguration {
   bool skip_primary_setup_account_creation = 1;
   bool set_primary_setup_account_as_regular_user = 2;
+  bool dont_auto_populate_primary_account_info = 4;
+  bool lock_primary_account_info = 5;
+  string primary_account_full_name = 6;
+  string primary_account_user_name = 7;
   repeated AutoSetupAdminAccounts auto_setup_admin_accounts = 3;
 }
 
@@ -388,6 +398,11 @@ message FileVaultUnlock {
   bytes private_key_export = 2;
   string private_key_export_password = 3;
 }
+
+message SetBootstrapToken {
+  string bootstrap_token = 1;
+}
+
 
 message ResultPayload {
   enum Status {

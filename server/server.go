@@ -13,6 +13,7 @@ import (
 	"github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	challengestore "github.com/micromdm/scep/challenge/bolt"
 	boltdepot "github.com/micromdm/scep/depot/bolt"
 	scep "github.com/micromdm/scep/server"
 	"github.com/pkg/errors"
@@ -41,31 +42,33 @@ import (
 )
 
 type Server struct {
-	ConfigPath         string
-	Depsim             string
-	PubClient          pubsub.PublishSubscriber
-	DB                 *bolt.DB
-	ServerPublicURL    string
-	SCEPChallenge      string
-	SCEPClientValidity int
-	TLSCertPath        string
-	SCEPDepot          *boltdepot.Depot
-	ProfileDB          profile.Store
-	ConfigDB           config.Store
-	RemoveDB           block.Store
-	CommandWebhookURL  string
-	DEPClient          *dep.Client
-	VPPClient          *vpp.Client
-	SyncDB             *syncbuiltin.DB
-
-	APNSPushService apns.Service
-	CommandService  command.Service
-	MDMService      mdm.Service
-	EnrollService   enroll.Service
-	SCEPService     scep.Service
-	ConfigService   config.Service
-
-	WebhooksHTTPClient *http.Client
+	ConfigPath          string
+	Depsim              string
+	PubClient           pubsub.PublishSubscriber
+	DB                  *bolt.DB
+	ServerPublicURL     string
+	SCEPChallenge       string
+	SCEPClientValidity  int
+	TLSCertPath         string
+	SCEPDepot           *boltdepot.Depot
+	UseDynSCEPChallenge bool
+	GenDynSCEPChallenge bool
+	SCEPChallengeDepot  *challengestore.Depot
+	ProfileDB           profile.Store
+	ConfigDB            config.Store
+	RemoveDB            block.Store
+	CommandWebhookURL   string
+	DEPClient           *dep.Client
+	VPPClient           *vpp.Client
+	SyncDB              *syncbuiltin.DB
+	NoCmdHistory        bool
+	APNSPushService     apns.Service
+	CommandService      command.Service
+	MDMService          mdm.Service
+	EnrollService       enroll.Service
+	SCEPService         scep.Service
+	ConfigService       config.Service
+	WebhooksHTTPClient  *http.Client
 }
 
 func (c *Server) Setup(logger log.Logger) error {
@@ -166,7 +169,11 @@ func (c *Server) setupCommandService() error {
 }
 
 func (c *Server) setupCommandQueue(logger log.Logger) error {
-	q, err := queue.NewQueue(c.DB, c.PubClient, queue.WithLogger(logger))
+	opts := []queue.Option{queue.WithLogger(logger)}
+	if c.NoCmdHistory {
+		opts = append(opts, queue.WithoutHistory())
+	}
+	q, err := queue.NewQueue(c.DB, c.PubClient, opts...)
 	if err != nil {
 		return err
 	}
@@ -244,6 +251,12 @@ func (c *Server) setupEnrollmentService() error {
 		SCEPCertificateSubject string
 		err                    error
 	)
+
+	chalStore := c.SCEPChallengeDepot
+	if !c.GenDynSCEPChallenge {
+		chalStore = nil
+	}
+
 	// TODO: clean up order of inputs. Maybe pass *SCEPConfig as an arg?
 	// but if you do, the packages are coupled, better not.
 	c.EnrollService, err = enroll.NewService(
@@ -255,6 +268,7 @@ func (c *Server) setupEnrollmentService() error {
 		c.TLSCertPath,
 		SCEPCertificateSubject,
 		c.ProfileDB,
+		chalStore,
 	)
 	return errors.Wrap(err, "setting up enrollment service")
 }
@@ -388,8 +402,18 @@ func (c *Server) setupSCEP(logger log.Logger) error {
 
 	opts := []scep.ServiceOption{
 		scep.ClientValidity(c.SCEPClientValidity),
-		scep.ChallengePassword(c.SCEPChallenge),
 	}
+	var scepChalOpt scep.ServiceOption
+	if c.UseDynSCEPChallenge {
+		c.SCEPChallengeDepot, err = challengestore.NewBoltDepot(c.DB)
+		if err != nil {
+			return err
+		}
+		scepChalOpt = scep.WithDynamicChallenges(c.SCEPChallengeDepot)
+	} else {
+		scepChalOpt = scep.ChallengePassword(c.SCEPChallenge)
+	}
+	opts = append(opts, scepChalOpt)
 	c.SCEPDepot = depot
 	c.SCEPService, err = scep.NewService(depot, opts...)
 	if err != nil {

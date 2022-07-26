@@ -2,9 +2,9 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 	"strings"
 
 	"github.com/go-kit/kit/endpoint"

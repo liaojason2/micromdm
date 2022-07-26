@@ -28,6 +28,7 @@ type Profile struct {
 	Devices               []string `json:"devices"`
 	Language              string   `json:"language,omitempty"`
 	Region                string   `json:"region,omitempty"`
+	ConfigurationWebURL   string   `json:"configuration_web_url,omitempty"`
 }
 
 type ProfileResponse struct {
@@ -78,7 +79,9 @@ func (c *Client) FetchProfile(uuid string) (*Profile, error) {
 }
 
 func (c *Client) RemoveProfile(serials ...string) (map[string]string, error) {
-	var response map[string]string
+	var response struct {
+		Devices map[string]string `json:"devices"`
+	}
 	var request = struct {
 		Devices []string `json:"devices"`
 	}{Devices: serials}
@@ -88,5 +91,5 @@ func (c *Client) RemoveProfile(serials ...string) (map[string]string, error) {
 		return nil, errors.Wrap(err, "create fetch profile request")
 	}
 	err = c.do(req, &response)
-	return response, errors.Wrap(err, "remove profile")
+	return response.Devices, errors.Wrap(err, "remove profile")
 }
